@@ -1,32 +1,16 @@
 import qrcode
 from flask import Flask, request, render_template_string, send_file
-import os
 
 app = Flask(__name__)
 
-# Use /tmp directory for file persistence on Vercel
-FILE_PATH = "/tmp/click_count.txt"
-
-# Function to load the click count from a file
-def load_click_count(file_path=FILE_PATH):
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            try:
-                return int(f.read().strip())
-            except ValueError:
-                return 0
-    return 0
-
-# Function to save the click count to a file
-def save_click_count(count, file_path=FILE_PATH):
-    with open(file_path, "w") as f:
-        f.write(str(count))
-
 # Global click counter
-click_count = load_click_count()
+click_count = 0
 
-# QR Code generator function
 def generate_qr_code(link, file_name="/tmp/qrcode.png"):
+
+    """
+    Generates a QR code for the specified website link and saves it as an image file.
+    """
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -45,11 +29,11 @@ def index():
         link = request.form.get("link")
         if link:
             click_count += 1  # Increment the click counter
-            save_click_count(click_count)  # Save the updated count
             generate_qr_code(link)
             return send_file("/tmp/qrcode.png", as_attachment=True)
 
-    # HTML with dynamic counter display
+    
+       # HTML with dynamic counter display
     return render_template_string('''
     <!doctype html>
     <html>
