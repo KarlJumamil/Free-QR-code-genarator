@@ -33,7 +33,7 @@ def index():
             return send_file("/tmp/qrcode.png", as_attachment=True)
 
     
-    # HTML with dynamic counter display
+       # HTML with dynamic counter display
     return render_template_string('''
     <!doctype html>
     <html>
@@ -119,3 +119,7 @@ def index():
         </body>
     </html>
     ''', click_count=click_count)
+
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
