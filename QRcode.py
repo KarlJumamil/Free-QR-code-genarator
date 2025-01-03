@@ -4,8 +4,11 @@ import os
 
 app = Flask(__name__)
 
+# Use /tmp directory for file persistence on Vercel
+FILE_PATH = "/tmp/click_count.txt"
+
 # Function to load the click count from a file
-def load_click_count(file_path="click_count.txt"):
+def load_click_count(file_path=FILE_PATH):
     if os.path.exists(file_path):
         with open(file_path, "r") as f:
             try:
@@ -15,7 +18,7 @@ def load_click_count(file_path="click_count.txt"):
     return 0
 
 # Function to save the click count to a file
-def save_click_count(count, file_path="click_count.txt"):
+def save_click_count(count, file_path=FILE_PATH):
     with open(file_path, "w") as f:
         f.write(str(count))
 
