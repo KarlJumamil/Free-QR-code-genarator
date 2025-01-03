@@ -1,13 +1,32 @@
 import qrcode
 from flask import Flask, request, render_template_string, send_file
+import os
 
 app = Flask(__name__)
 
-# Global click counter
-click_count = 0
+# File to store click count
+COUNTER_FILE = "click_count.txt"
+
+def read_click_count():
+    """
+    Reads the click count from a file. If the file does not exist, returns 0.
+    """
+    if os.path.exists(COUNTER_FILE):
+        with open(COUNTER_FILE, "r") as file:
+            return int(file.read().strip())
+    return 0
+
+def write_click_count(count):
+    """
+    Writes the click count to a file, creating the file if it does not exist.
+    """
+    with open(COUNTER_FILE, "w") as file:
+        file.write(str(count))
+
+# Initialize click count from file
+click_count = read_click_count()
 
 def generate_qr_code(link, file_name="/tmp/qrcode.png"):
-
     """
     Generates a QR code for the specified website link and saves it as an image file.
     """
@@ -28,12 +47,12 @@ def index():
     if request.method == "POST":
         link = request.form.get("link")
         if link:
-            click_count += 1  # Increment the click counter
+            click_count += 1
+            write_click_count(click_count)  # Update the file with the new count
             generate_qr_code(link)
             return send_file("/tmp/qrcode.png", as_attachment=True)
 
-    
-       # HTML with dynamic counter display
+    # HTML with dynamic counter display
     return render_template_string('''
     <!doctype html>
     <html>
