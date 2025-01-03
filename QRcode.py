@@ -6,7 +6,8 @@ app = Flask(__name__)
 # Global click counter
 click_count = 0
 
-def generate_qr_code(link, file_name="qrcode.png"):
+def generate_qr_code(link, file_name="/tmp/qrcode.png"):
+
     """
     Generates a QR code for the specified website link and saves it as an image file.
     """
@@ -29,7 +30,8 @@ def index():
         if link:
             click_count += 1  # Increment the click counter
             generate_qr_code(link)
-            return send_file("qrcode.png", as_attachment=True)
+            return send_file("/tmp/qrcode.png", as_attachment=True)
+
     
     # HTML with dynamic counter display
     return render_template_string('''
@@ -117,7 +119,3 @@ def index():
         </body>
     </html>
     ''', click_count=click_count)
-
-if __name__ == "__main__":
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
